@@ -1,7 +1,7 @@
 'use client';
 
 import React, { Suspense, useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { motion } from 'framer-motion';
@@ -9,7 +9,7 @@ import { calculateFortune } from '@/engine/core';
 import { FortuneResult, UserProfile, AnimalType } from '@/lib/types';
 import Link from 'next/link';
 /* eslint-disable @next/next/no-img-element */
-import { ArrowLeft, Lock, Shield } from 'lucide-react';
+import { Home, RotateCcw, Lock, Shield } from 'lucide-react';
 
 const ANIMAL_EMOJIS: Record<AnimalType, string> = {
     [AnimalType.PEGASUS]: '🦄',
@@ -28,6 +28,7 @@ const ANIMAL_EMOJIS: Record<AnimalType, string> = {
 
 function ResultContent() {
     const searchParams = useSearchParams();
+    const router = useRouter();
     const isAdmin = searchParams.get('admin') === '1';
 
     const [result, setResult] = useState<FortuneResult | null>(null);
@@ -210,13 +211,26 @@ function ResultContent() {
                 )}
             </div>
 
-            <div className="mt-8 text-center">
+            {/* Navigation Buttons */}
+            <div className="mt-8 flex justify-center gap-4">
                 <Link href="/">
-                    <Button variant="secondary" size="sm" className="text-gray-400">
-                        <ArrowLeft size={16} className="mr-2" />
-                        トップに戻る
+                    <Button variant="secondary" size="sm" className="text-gray-500">
+                        <Home size={16} className="mr-1" />
+                        スタートに戻る
                     </Button>
                 </Link>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-gray-500"
+                    onClick={() => {
+                        localStorage.removeItem('fortune_profile');
+                        router.push('/diagnosis/step1-basic');
+                    }}
+                >
+                    <RotateCcw size={16} className="mr-1" />
+                    リセット
+                </Button>
             </div>
         </div>
     );

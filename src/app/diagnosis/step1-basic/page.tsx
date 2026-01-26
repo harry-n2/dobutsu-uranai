@@ -2,10 +2,12 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { motion } from 'framer-motion';
+import { Home, RotateCcw } from 'lucide-react';
 
 export default function Step1Basic() {
     const router = useRouter();
@@ -84,8 +86,30 @@ export default function Step1Basic() {
                 </div>
             </Card>
 
+            {/* Navigation Buttons */}
+            <div className="mt-6 flex justify-center gap-4">
+                <Link href="/">
+                    <Button variant="secondary" size="sm" className="text-gray-500">
+                        <Home size={16} className="mr-1" />
+                        スタートに戻る
+                    </Button>
+                </Link>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-gray-500"
+                    onClick={() => {
+                        localStorage.removeItem('fortune_profile');
+                        setFormData({ name: '', gender: 'female', birthDate: '' });
+                    }}
+                >
+                    <RotateCcw size={16} className="mr-1" />
+                    リセット
+                </Button>
+            </div>
+
             {/* Immersive Element */}
-            <div className="mt-8 text-center text-xs text-gray-400 animate-pulse">
+            <div className="mt-4 text-center text-xs text-gray-400 animate-pulse">
                 ★ 入力された情報は鑑定のみに使用されます
             </div>
         </motion.div>
