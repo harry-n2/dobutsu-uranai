@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# どうぶつ幸福占い 🦁✨
 
-## Getting Started
+SNSから流入したユーザーが「自分を取り戻し、経済的に自立する」ための入り口となるWebアプリです。
 
-First, run the development server:
+## 特徴
+
+- **命・卜・相の3系統統合** - 12の占術を組み合わせた本格鑑定
+- **12動物キャラクター** - ペガサス、ライオン、チーター、こじか、ゾウ、猿、黒ひょう、たぬき、子守熊、虎、ひつじ、狼
+- **没入型体験** - パステルカラー＋ゴールドのUI、アニメーション演出
+- **3分で完了** - シンプルな3ステップ入力フォーム
+- **LINE公式アカウント連携** - 詳細鑑定書をLINEで配信
+
+## ターゲット
+
+- 30代ママ：才能の持ち腐れ型
+- 40代女性：キャリア葛藤型
+- 50代主婦：人生再構築型
+
+## 技術スタック
+
+- Next.js 16
+- React 19
+- TypeScript
+- Tailwind CSS 4
+- Framer Motion
+
+## 開発
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+http://localhost:3000 でアプリが起動します。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## ライセンス
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Private
