@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { Suspense, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { motion } from 'framer-motion';
@@ -9,7 +9,7 @@ import { calculateFortune } from '@/engine/core';
 import { FortuneResult, UserProfile, AnimalType } from '@/lib/types';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, Share2, Lock, Gift } from 'lucide-react';
+import { ArrowLeft, Lock, Shield } from 'lucide-react';
 
 const ANIMAL_EMOJIS: Record<AnimalType, string> = {
     [AnimalType.PEGASUS]: '🦄',
@@ -26,12 +26,14 @@ const ANIMAL_EMOJIS: Record<AnimalType, string> = {
     [AnimalType.WOLF]: '🐺',
 };
 
-export default function ResultPage() {
+function ResultContent() {
+    const searchParams = useSearchParams();
+    const isAdmin = searchParams.get('admin') === '1';
+
     const [result, setResult] = useState<FortuneResult | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Simulate calculation time for "Immersive" feeling
         const timer = setTimeout(() => {
             const dataStr = localStorage.getItem('fortune_profile');
             if (dataStr) {
@@ -40,7 +42,7 @@ export default function ResultPage() {
                 setResult(res);
             }
             setLoading(false);
-        }, 2500); // 2.5s delay for animation
+        }, 2500);
 
         return () => clearTimeout(timer);
     }, []);
@@ -75,7 +77,6 @@ export default function ResultPage() {
                     <span className="text-gray-500 text-sm font-bold tracking-widest">あなたの本質は...</span>
                 </div>
 
-                {/* Animal Reveal */}
                 <div className="relative w-64 h-64 mx-auto mb-6">
                     <div className="absolute inset-0 bg-gradient-to-tr from-pink-200 to-yellow-200 rounded-full animate-pulse blur-xl opacity-70" />
                     <div className="relative bg-white rounded-full w-full h-full flex items-center justify-center shadow-2xl border-4 border-white text-8xl">
@@ -88,8 +89,6 @@ export default function ResultPage() {
             </motion.div>
 
             <div className="space-y-6">
-
-                {/* Story Card */}
                 <Card className="bg-gradient-to-br from-white to-pink-50 border-pink-100">
                     <h3 className="font-bold text-gray-700 mb-3 flex items-center">
                         <span className="w-1 h-6 bg-pink-400 mr-2 rounded-full" />
@@ -100,18 +99,14 @@ export default function ResultPage() {
                     </p>
                 </Card>
 
-                {/* Economic Potential */}
                 <Card className="bg-gradient-to-br from-gray-900 to-gray-800 text-white border-none shadow-2xl overflow-hidden relative">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500 rounded-full blur-3xl opacity-20" />
-
                     <h3 className="text-yellow-400 font-bold tracking-wider text-xs mb-1">ECONOMIC POTENTIAL</h3>
                     <p className="text-gray-400 text-xs mb-4">あなたの潜在的な経済価値</p>
-
                     <div className="flex items-baseline gap-2">
                         <span className="text-4xl md:text-5xl font-bold text-white">{result.economicForecast.potentialIncome}</span>
                         <span className="text-sm text-gray-400">/ 月</span>
                     </div>
-
                     <div className="mt-6 pt-6 border-t border-gray-700">
                         <div className="flex items-center justify-between text-sm">
                             <span className="text-gray-300">隠れ資産レベル</span>
@@ -122,51 +117,97 @@ export default function ResultPage() {
                     </div>
                 </Card>
 
-                {/* Roadmap (Blurred/Teaser) */}
-                <div className="relative">
-                    <Card className="opacity-80 blur-[2px] pointer-events-none select-none">
+                {isAdmin ? (
+                    <Card className="border-2 border-purple-300 bg-gradient-to-br from-purple-50 to-white">
+                        <div className="flex items-center gap-2 mb-4">
+                            <Shield className="text-purple-500" size={20} />
+                            <span className="text-xs font-bold text-purple-500 tracking-wider">ADMIN MODE</span>
+                        </div>
                         <h3 className="font-bold text-gray-700 mb-4">自立への3ステップ</h3>
                         {result.economicForecast.roadmapSteps.map((step) => (
-                            <div key={step.step} className="mb-4">
+                            <div key={step.step} className="mb-4 p-3 bg-white rounded-lg border border-gray-100">
                                 <div className="font-bold text-gray-800">STEP {step.step}: {step.title}</div>
-                                <div className="text-sm text-gray-500">{step.description}</div>
+                                <div className="text-sm text-gray-600 mt-1">{step.description}</div>
                             </div>
                         ))}
-                    </Card>
-
-                    {/* Unlock CTA Overlay */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/5 rounded-2xl z-10">
-                        <Card className="bg-white/95 shadow-2xl max-w-xs text-center p-6 border-2 border-green-400">
-                            <Lock className="mx-auto text-green-500 mb-2" />
-                            <h3 className="font-bold text-gray-800 mb-2">鑑定書の完全版を受け取る</h3>
-                            <p className="text-xs text-gray-500 mb-4">
-                                詳細なロードマップと<br />あなただけの成功戦略をLINEで送付します
-                            </p>
-
-                            {/* LINE QR Code */}
-                            <div className="mb-4 p-3 bg-white rounded-xl border border-gray-100 shadow-inner">
-                                <Image
-                                    src="/line-qr.png"
-                                    alt="LINE公式アカウント QRコード"
-                                    width={160}
-                                    height={160}
-                                    className="mx-auto"
-                                />
+                        <div className="mt-6 pt-4 border-t border-purple-100">
+                            <h4 className="font-bold text-gray-700 mb-3">ラッキー要素</h4>
+                            <div className="grid grid-cols-3 gap-3 text-center text-sm">
+                                <div className="bg-white p-3 rounded-lg border">
+                                    <div className="text-gray-400 text-xs">カラー</div>
+                                    <div className="font-bold text-gray-700">{result.luckyElements.color}</div>
+                                </div>
+                                <div className="bg-white p-3 rounded-lg border">
+                                    <div className="text-gray-400 text-xs">方角</div>
+                                    <div className="font-bold text-gray-700">{result.luckyElements.direction}</div>
+                                </div>
+                                <div className="bg-white p-3 rounded-lg border">
+                                    <div className="text-gray-400 text-xs">アイテム</div>
+                                    <div className="font-bold text-gray-700">{result.luckyElements.item}</div>
+                                </div>
                             </div>
-
-                            <p className="text-xs text-gray-400 mb-3">
-                                QRコードをスキャン or 下のボタンをタップ
-                            </p>
-
-                            <a href="https://lin.ee/WdYf2tq" target="_blank" rel="noopener noreferrer">
-                                <Button className="w-full bg-[#06C755] hover:bg-[#05b54c] text-white shadow-green-200 shadow-lg" size="sm">
-                                    LINEで友だち追加 (無料)
-                                </Button>
-                            </a>
+                        </div>
+                        <div className="mt-6 pt-4 border-t border-purple-100">
+                            <h4 className="font-bold text-gray-700 mb-3">コア資産</h4>
+                            <div className="space-y-2 text-sm">
+                                <div className="bg-white p-3 rounded-lg border">
+                                    <div className="text-gray-400 text-xs">才能</div>
+                                    <div className="text-gray-700">{result.coreAssets.talent}</div>
+                                </div>
+                                <div className="bg-white p-3 rounded-lg border">
+                                    <div className="text-gray-400 text-xs">隠れスキル</div>
+                                    <div className="text-gray-700">{result.coreAssets.hiddenSkill}</div>
+                                </div>
+                                <div className="bg-white p-3 rounded-lg border">
+                                    <div className="text-gray-400 text-xs">勝ちパターン</div>
+                                    <div className="text-gray-700">{result.coreAssets.winningPattern}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="mt-6 pt-4 border-t border-purple-100">
+                            <h4 className="font-bold text-gray-700 mb-2">今日のアドバイス</h4>
+                            <p className="text-sm text-gray-600 bg-yellow-50 p-3 rounded-lg">{result.dailyAdvice}</p>
+                        </div>
+                    </Card>
+                ) : (
+                    <div className="relative">
+                        <Card className="opacity-80 blur-[2px] pointer-events-none select-none">
+                            <h3 className="font-bold text-gray-700 mb-4">自立への3ステップ</h3>
+                            {result.economicForecast.roadmapSteps.map((step) => (
+                                <div key={step.step} className="mb-4">
+                                    <div className="font-bold text-gray-800">STEP {step.step}: {step.title}</div>
+                                    <div className="text-sm text-gray-500">{step.description}</div>
+                                </div>
+                            ))}
                         </Card>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/5 rounded-2xl z-10">
+                            <Card className="bg-white/95 shadow-2xl max-w-xs text-center p-6 border-2 border-green-400">
+                                <Lock className="mx-auto text-green-500 mb-2" />
+                                <h3 className="font-bold text-gray-800 mb-2">鑑定書の完全版を受け取る</h3>
+                                <p className="text-xs text-gray-500 mb-4">
+                                    詳細なロードマップと<br />あなただけの成功戦略をLINEで送付します
+                                </p>
+                                <div className="mb-4 p-3 bg-white rounded-xl border border-gray-100 shadow-inner">
+                                    <Image
+                                        src="/line-qr.png"
+                                        alt="LINE公式アカウント QRコード"
+                                        width={160}
+                                        height={160}
+                                        className="mx-auto"
+                                    />
+                                </div>
+                                <p className="text-xs text-gray-400 mb-3">
+                                    QRコードをスキャン or 下のボタンをタップ
+                                </p>
+                                <a href="https://lin.ee/WdYf2tq" target="_blank" rel="noopener noreferrer">
+                                    <Button className="w-full bg-[#06C755] hover:bg-[#05b54c] text-white shadow-green-200 shadow-lg" size="sm">
+                                        LINEで友だち追加 (無料)
+                                    </Button>
+                                </a>
+                            </Card>
+                        </div>
                     </div>
-                </div>
-
+                )}
             </div>
 
             <div className="mt-8 text-center">
@@ -178,5 +219,18 @@ export default function ResultPage() {
                 </Link>
             </div>
         </div>
+    );
+}
+
+export default function ResultPage() {
+    return (
+        <Suspense fallback={
+            <div className="fixed inset-0 bg-white/90 backdrop-blur-xl flex flex-col items-center justify-center z-50">
+                <div className="text-6xl mb-8 animate-spin">🔮</div>
+                <h2 className="text-2xl font-bold text-gray-700 mb-2">読み込み中...</h2>
+            </div>
+        }>
+            <ResultContent />
+        </Suspense>
     );
 }
