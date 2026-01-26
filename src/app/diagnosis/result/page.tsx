@@ -158,7 +158,7 @@ export default function ResultPage() {
                                 QRコードをスキャン or 下のボタンをタップ
                             </p>
 
-                            <a href="https://lin.ee/your-line-id" target="_blank" rel="noopener noreferrer">
+                            <a href="https://lin.ee/WdYf2tq" target="_blank" rel="noopener noreferrer">
                                 <Button className="w-full bg-[#06C755] hover:bg-[#05b54c] text-white shadow-green-200 shadow-lg" size="sm">
                                     LINEで友だち追加 (無料)
                                 </Button>
