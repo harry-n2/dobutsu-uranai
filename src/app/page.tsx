@@ -1,15 +1,64 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { Sparkles, Star, Heart, ArrowRight } from 'lucide-react';
+import { Sparkles, Star, Heart, ArrowRight, Shield, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Home() {
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [tapCount, setTapCount] = useState(0);
+
+    // Load admin mode from localStorage on mount
+    useEffect(() => {
+        const adminMode = localStorage.getItem('admin_mode') === '1';
+        setIsAdmin(adminMode);
+    }, []);
+
+    // Hidden feature: Tap title 5 times to enter admin mode
+    const handleTitleTap = () => {
+        const newCount = tapCount + 1;
+        setTapCount(newCount);
+
+        if (newCount >= 5) {
+            setIsAdmin(true);
+            localStorage.setItem('admin_mode', '1');
+            setTapCount(0);
+        }
+
+        // Reset tap count after 3 seconds
+        setTimeout(() => setTapCount(0), 3000);
+    };
+
+    // Exit admin mode
+    const exitAdminMode = () => {
+        setIsAdmin(false);
+        localStorage.removeItem('admin_mode');
+    };
+
     return (
         <main className="flex flex-col items-center justify-center min-h-screen p-4 md:p-8 overflow-hidden relative">
+
+            {/* Admin Mode Banner */}
+            {isAdmin && (
+                <motion.div
+                    initial={{ y: -50, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    className="fixed top-0 left-0 right-0 bg-purple-600 text-white py-2 px-4 flex items-center justify-center gap-3 z-50 shadow-lg"
+                >
+                    <Shield size={18} />
+                    <span className="font-bold text-sm">管理者モード ON</span>
+                    <button
+                        onClick={exitAdminMode}
+                        className="ml-4 bg-white/20 hover:bg-white/30 rounded-full px-3 py-1 text-xs font-bold flex items-center gap-1 transition-colors"
+                    >
+                        <X size={14} />
+                        通常モードに戻る
+                    </button>
+                </motion.div>
+            )}
 
             {/* Background Decor */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
@@ -25,7 +74,7 @@ export default function Home() {
                 />
             </div>
 
-            <div className="max-w-4xl w-full z-10 flex flex-col items-center">
+            <div className={`max-w-4xl w-full z-10 flex flex-col items-center ${isAdmin ? 'mt-12' : ''}`}>
 
                 {/* Header / Logo Area */}
                 <motion.div
@@ -38,12 +87,23 @@ export default function Home() {
                         <Sparkles size={16} />
                         <span>2026年最新 没入型鑑定</span>
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-700 to-gray-500 mb-4 tracking-tight" style={{ lineHeight: 1.2 }}>
+                    <h1
+                        onClick={handleTitleTap}
+                        className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-700 to-gray-500 mb-4 tracking-tight cursor-pointer select-none"
+                        style={{ lineHeight: 1.2 }}
+                    >
                         どうぶつ<span className="text-pink-400">幸福</span>占い
                     </h1>
                     <p className="text-gray-600 text-lg md:text-xl font-medium">
                         あなたの「隠れ資産」を眠らせていませんか？
                     </p>
+
+                    {/* Tap indicator (hidden, for debugging) */}
+                    {tapCount > 0 && tapCount < 5 && (
+                        <p className="text-xs text-gray-300 mt-2">
+                            {'●'.repeat(tapCount)}{'○'.repeat(5 - tapCount)}
+                        </p>
+                    )}
                 </motion.div>
 
                 {/* Hero Visual Area - Placeholder for Animal Illustration */}
@@ -101,6 +161,19 @@ export default function Home() {
                         desc="あなたのスキルがいくらの価値になる？具体的な「理想月収」への道筋。"
                     />
                 </div>
+
+                {/* Admin Mode Instructions */}
+                {isAdmin && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="mt-8 p-4 bg-purple-50 border-2 border-purple-200 rounded-xl text-center"
+                    >
+                        <p className="text-purple-700 text-sm font-medium">
+                            🔐 管理者モードが有効です。鑑定結果画面でユーザー入力情報を確認できます。
+                        </p>
+                    </motion.div>
+                )}
 
             </div>
         </main>

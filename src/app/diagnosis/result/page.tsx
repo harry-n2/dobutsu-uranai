@@ -29,13 +29,18 @@ const ANIMAL_EMOJIS: Record<AnimalType, string> = {
 function ResultContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const isAdmin = searchParams.get('admin') === '1';
 
     const [result, setResult] = useState<FortuneResult | null>(null);
     const [profile, setProfile] = useState<UserProfile | null>(null);
     const [loading, setLoading] = useState(true);
+    const [isAdmin, setIsAdmin] = useState(false);
 
     useEffect(() => {
+        // Check admin mode from URL param OR localStorage
+        const urlAdmin = searchParams.get('admin') === '1';
+        const storageAdmin = localStorage.getItem('admin_mode') === '1';
+        setIsAdmin(urlAdmin || storageAdmin);
+
         const timer = setTimeout(() => {
             const dataStr = localStorage.getItem('fortune_profile');
             if (dataStr) {
@@ -48,7 +53,7 @@ function ResultContent() {
         }, 2500);
 
         return () => clearTimeout(timer);
-    }, []);
+    }, [searchParams]);
 
     if (loading) {
         return (
