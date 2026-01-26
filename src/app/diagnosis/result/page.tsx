@@ -8,7 +8,7 @@ import { motion } from 'framer-motion';
 import { calculateFortune } from '@/engine/core';
 import { FortuneResult, UserProfile, AnimalType } from '@/lib/types';
 import Link from 'next/link';
-import Image from 'next/image';
+/* eslint-disable @next/next/no-img-element */
 import { ArrowLeft, Lock, Shield } from 'lucide-react';
 
 const ANIMAL_EMOJIS: Record<AnimalType, string> = {
@@ -188,8 +188,8 @@ function ResultContent() {
                                     詳細なロードマップと<br />あなただけの成功戦略をLINEで送付します
                                 </p>
                                 <div className="mb-4 p-3 bg-white rounded-xl border border-gray-100 shadow-inner">
-                                    <Image
-                                        src="/line-qr.png"
+                                    <img
+                                        src="https://harry-n2.github.io/dobutsu-uranai/line-qr.png"
                                         alt="LINE公式アカウント QRコード"
                                         width={160}
                                         height={160}
