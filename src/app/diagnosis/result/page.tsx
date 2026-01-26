@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import { calculateFortune } from '@/engine/core';
 import { FortuneResult, UserProfile, AnimalType } from '@/lib/types';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowLeft, Share2, Lock, Gift } from 'lucide-react';
 
 const ANIMAL_EMOJIS: Record<AnimalType, string> = {
@@ -141,9 +142,27 @@ export default function ResultPage() {
                             <p className="text-xs text-gray-500 mb-4">
                                 詳細なロードマップと<br />あなただけの成功戦略をLINEで送付します
                             </p>
-                            <Button className="w-full bg-[#06C755] hover:bg-[#05b54c] text-white shadow-green-200 shadow-lg" size="sm">
-                                LINEで受け取る (無料)
-                            </Button>
+
+                            {/* LINE QR Code */}
+                            <div className="mb-4 p-3 bg-white rounded-xl border border-gray-100 shadow-inner">
+                                <Image
+                                    src="/line-qr.png"
+                                    alt="LINE公式アカウント QRコード"
+                                    width={160}
+                                    height={160}
+                                    className="mx-auto"
+                                />
+                            </div>
+
+                            <p className="text-xs text-gray-400 mb-3">
+                                QRコードをスキャン or 下のボタンをタップ
+                            </p>
+
+                            <a href="https://lin.ee/your-line-id" target="_blank" rel="noopener noreferrer">
+                                <Button className="w-full bg-[#06C755] hover:bg-[#05b54c] text-white shadow-green-200 shadow-lg" size="sm">
+                                    LINEで友だち追加 (無料)
+                                </Button>
+                            </a>
                         </Card>
                     </div>
                 </div>
