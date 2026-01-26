@@ -13,8 +13,9 @@ export default function Step1Basic() {
     const router = useRouter();
     const [formData, setFormData] = useState({
         name: '',
-        gender: 'female',
+        email: '',
         birthDate: '',
+        gender: 'female',
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -22,10 +23,13 @@ export default function Step1Basic() {
     };
 
     const onNext = () => {
-        // Simple validation
-        if (!formData.name || !formData.birthDate) return alert('必須項目を入力してください');
+        if (!formData.name || !formData.email || !formData.birthDate) {
+            return alert('必須項目を入力してください');
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            return alert('有効なメールアドレスを入力してください');
+        }
 
-        // Save to local storage for MVP state management
         const current = JSON.parse(localStorage.getItem('fortune_profile') || '{}');
         localStorage.setItem('fortune_profile', JSON.stringify({ ...current, ...formData }));
 
@@ -42,16 +46,36 @@ export default function Step1Basic() {
                 <div className="text-center mb-8">
                     <span className="bg-pink-100 text-pink-600 px-3 py-1 rounded-full text-xs font-bold tracking-wider">STEP 1 / 3</span>
                     <h1 className="text-2xl font-bold mt-4 text-gray-800">あなたについて教えてください</h1>
-                    <p className="text-gray-500 text-sm mt-2">まずはお名前と生年月日を入力して、<br />本来の「命」の運勢を算出します。</p>
+                    <p className="text-gray-500 text-sm mt-2">まずは基本情報を入力して、<br />本来の「命」の運勢を算出します。</p>
                 </div>
 
                 <div className="space-y-6">
                     <Input
-                        label="お名前 (ニックネーム可)"
+                        label="お名前（ニックネーム可）"
                         name="name"
                         placeholder="例: 山田 花子"
                         value={formData.name}
                         onChange={handleChange}
+                        required
+                    />
+
+                    <Input
+                        label="メールアドレス"
+                        type="email"
+                        name="email"
+                        placeholder="例: example@email.com"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                    />
+
+                    <Input
+                        label="生年月日"
+                        type="date"
+                        name="birthDate"
+                        value={formData.birthDate}
+                        onChange={handleChange}
+                        required
                     />
 
                     <div>
@@ -60,10 +84,11 @@ export default function Step1Basic() {
                             {['female', 'male', 'other'].map((g) => (
                                 <button
                                     key={g}
-                                    onClick={() => setFormData({ ...formData, gender: g as any })}
+                                    type="button"
+                                    onClick={() => setFormData({ ...formData, gender: g })}
                                     className={`flex-1 py-3 rounded-xl border ${formData.gender === g
-                                            ? 'bg-pink-50 border-pink-400 text-pink-600 font-bold'
-                                            : 'bg-white border-gray-200 text-gray-400'
+                                        ? 'bg-pink-50 border-pink-400 text-pink-600 font-bold'
+                                        : 'bg-white border-gray-200 text-gray-400'
                                         } transition-all`}
                                 >
                                     {g === 'female' ? '女性' : g === 'male' ? '男性' : 'その他'}
@@ -71,14 +96,6 @@ export default function Step1Basic() {
                             ))}
                         </div>
                     </div>
-
-                    <Input
-                        label="生年月日"
-                        type="date"
-                        name="birthDate"
-                        value={formData.birthDate}
-                        onChange={handleChange}
-                    />
 
                     <Button onClick={onNext} className="w-full mt-4" size="lg">
                         次へ進む
@@ -100,7 +117,7 @@ export default function Step1Basic() {
                     className="text-gray-500"
                     onClick={() => {
                         localStorage.removeItem('fortune_profile');
-                        setFormData({ name: '', gender: 'female', birthDate: '' });
+                        setFormData({ name: '', email: '', birthDate: '', gender: 'female' });
                     }}
                 >
                     <RotateCcw size={16} className="mr-1" />
@@ -108,7 +125,6 @@ export default function Step1Basic() {
                 </Button>
             </div>
 
-            {/* Immersive Element */}
             <div className="mt-4 text-center text-xs text-gray-400 animate-pulse">
                 ★ 入力された情報は鑑定のみに使用されます
             </div>

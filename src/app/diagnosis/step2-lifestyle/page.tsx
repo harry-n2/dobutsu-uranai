@@ -12,9 +12,7 @@ import { Home, RotateCcw } from 'lucide-react';
 export default function Step2Lifestyle() {
     const router = useRouter();
     const [formData, setFormData] = useState({
-        familySize: 3,
-        region: '',
-        currentIncome: '',
+        familySize: '',
         idealIncome: '',
     });
 
@@ -23,12 +21,14 @@ export default function Step2Lifestyle() {
     };
 
     const onNext = () => {
+        if (!formData.familySize || !formData.idealIncome) {
+            return alert('必須項目を入力してください');
+        }
+
         const current = JSON.parse(localStorage.getItem('fortune_profile') || '{}');
         localStorage.setItem('fortune_profile', JSON.stringify({
             ...current,
-            ...formData,
             familySize: Number(formData.familySize),
-            currentIncome: Number(formData.currentIncome),
             idealIncome: Number(formData.idealIncome)
         }));
         router.push('/diagnosis/step3-skills');
@@ -47,43 +47,27 @@ export default function Step2Lifestyle() {
                 </div>
 
                 <div className="space-y-6">
-                    <div className="grid grid-cols-2 gap-4">
-                        <Input
-                            label="家族構成 (人数)"
-                            type="number"
-                            name="familySize"
-                            value={formData.familySize}
-                            onChange={handleChange}
-                        />
-                        <Input
-                            label="お住まいの地域"
-                            name="region"
-                            placeholder="例: 東京都"
-                            value={formData.region}
-                            onChange={handleChange}
-                        />
-                    </div>
-
-                    <div className="border-t border-dashed border-gray-200 my-4" />
-
                     <Input
-                        label="現在の月収 (万円・任意)"
+                        label="家族人数（ご自身を含む）"
                         type="number"
-                        name="currentIncome"
-                        placeholder="おこづかい含む"
-                        value={formData.currentIncome}
+                        name="familySize"
+                        placeholder="例: 4"
+                        min="1"
+                        value={formData.familySize}
                         onChange={handleChange}
+                        required
                     />
 
                     <div className="relative">
                         <Input
-                            label="理想の月収 (万円)"
+                            label="理想の月収（万円）"
                             type="number"
                             name="idealIncome"
                             placeholder="あなたの本当の望みは？"
-                            className="border-yellow-300 bg-yellow-50/50"
+                            className="border-yellow-300 bg-yellow-50/50 pr-16"
                             value={formData.idealIncome}
                             onChange={handleChange}
+                            required
                         />
                         <span className="absolute right-4 top-10 text-yellow-500 font-bold">万円</span>
                     </div>

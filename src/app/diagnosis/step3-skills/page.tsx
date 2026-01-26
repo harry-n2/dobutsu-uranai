@@ -13,8 +13,9 @@ export default function Step3Skills() {
     const router = useRouter();
     const [formData, setFormData] = useState({
         skills: '',
+        hobbies: '',
         history: '',
-        worries: '',
+        remarks: '',
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -24,14 +25,14 @@ export default function Step3Skills() {
     const onNext = () => {
         const current = JSON.parse(localStorage.getItem('fortune_profile') || '{}');
 
-        // Save final data
         localStorage.setItem('fortune_profile', JSON.stringify({
             ...current,
-            ...formData,
-            skills: formData.skills.split(/,|\s+/).filter(Boolean), // Split by comma or space
+            skills: formData.skills,
+            hobbies: formData.hobbies,
+            history: formData.history,
+            remarks: formData.remarks,
         }));
 
-        // Go to Result
         router.push('/diagnosis/result');
     };
 
@@ -43,29 +44,50 @@ export default function Step3Skills() {
             <Card>
                 <div className="text-center mb-8">
                     <span className="bg-purple-100 text-purple-600 px-3 py-1 rounded-full text-xs font-bold tracking-wider">FINAL STEP</span>
-                    <h1 className="text-2xl font-bold mt-4 text-gray-800">秘めた才能と悩み</h1>
-                    <p className="text-gray-500 text-sm mt-2">「卜」の要素を取り入れ、<br />現状を打破する鍵を探します。</p>
+                    <h1 className="text-2xl font-bold mt-4 text-gray-800">秘めた才能と経験</h1>
+                    <p className="text-gray-500 text-sm mt-2">「卜」の要素を取り入れ、<br />あなたの隠れ資産を発掘します。</p>
                 </div>
 
                 <div className="space-y-6">
                     <Input
-                        label="特技・好きなこと (複数可)"
+                        label="スキル・特技"
                         name="skills"
-                        placeholder="例: 料理, 英語, 人の話を聞く"
+                        placeholder="例: 料理、英語、接客、PC操作"
                         value={formData.skills}
                         onChange={handleChange}
                     />
                     <p className="text-xs text-gray-400 -mt-4 ml-1">※あなたの「隠れ資産」の源泉になります</p>
 
+                    <Input
+                        label="趣味"
+                        name="hobbies"
+                        placeholder="例: 読書、ヨガ、ガーデニング"
+                        value={formData.hobbies}
+                        onChange={handleChange}
+                    />
+
                     <div className="w-full">
                         <label className="block text-sm font-medium text-gray-700 mb-1 ml-1">
-                            今の最大の悩み
+                            略歴・経験
                         </label>
                         <textarea
-                            name="worries"
+                            name="history"
                             className="flex w-full rounded-xl border border-gray-200 bg-white/80 px-4 py-3 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-300 resize-none h-24"
-                            placeholder="例: 自分の時間が取れない、将来のお金が不安..."
-                            value={formData.worries}
+                            placeholder="例: 事務職10年、子育て中、前職は営業..."
+                            value={formData.history}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    <div className="w-full">
+                        <label className="block text-sm font-medium text-gray-700 mb-1 ml-1">
+                            備考欄（その他ご希望・ご質問など）
+                        </label>
+                        <textarea
+                            name="remarks"
+                            className="flex w-full rounded-xl border border-gray-200 bg-white/80 px-4 py-3 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-300 resize-none h-24"
+                            placeholder="例: 在宅でできる仕事に興味があります..."
+                            value={formData.remarks}
                             onChange={handleChange}
                         />
                     </div>

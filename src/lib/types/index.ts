@@ -14,16 +14,21 @@ export enum AnimalType {
 }
 
 export interface UserProfile {
+  // STEP 1: 基本情報
   name: string;
+  email: string;
   birthDate: string; // YYYY-MM-DD
   gender: 'male' | 'female' | 'other';
+
+  // STEP 2: 環境・理想
   familySize: number;
-  region: string;
-  currentIncome: number; // in Yen
-  idealIncome: number;
-  skills: string[];
+  idealIncome: number; // 万円
+
+  // STEP 3: スキル・経験
+  skills: string;
+  hobbies: string;
   history: string;
-  worries: string;
+  remarks: string; // 備考欄
 }
 
 export interface FortuneResult {

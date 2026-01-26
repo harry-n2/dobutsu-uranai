@@ -9,7 +9,7 @@ import { calculateFortune } from '@/engine/core';
 import { FortuneResult, UserProfile, AnimalType } from '@/lib/types';
 import Link from 'next/link';
 /* eslint-disable @next/next/no-img-element */
-import { Home, RotateCcw, Lock, Shield } from 'lucide-react';
+import { Home, RotateCcw, Lock, Shield, User, Mail, Calendar, Users, Briefcase } from 'lucide-react';
 
 const ANIMAL_EMOJIS: Record<AnimalType, string> = {
     [AnimalType.PEGASUS]: '🦄',
@@ -32,14 +32,16 @@ function ResultContent() {
     const isAdmin = searchParams.get('admin') === '1';
 
     const [result, setResult] = useState<FortuneResult | null>(null);
+    const [profile, setProfile] = useState<UserProfile | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const timer = setTimeout(() => {
             const dataStr = localStorage.getItem('fortune_profile');
             if (dataStr) {
-                const profile = JSON.parse(dataStr) as UserProfile;
-                const res = calculateFortune(profile);
+                const profileData = JSON.parse(dataStr) as UserProfile;
+                setProfile(profileData);
+                const res = calculateFortune(profileData);
                 setResult(res);
             }
             setLoading(false);
@@ -119,10 +121,87 @@ function ResultContent() {
                 </Card>
 
                 {isAdmin ? (
+                    <>
+                    {/* Admin: User Input Information */}
+                    <Card className="border-2 border-blue-300 bg-gradient-to-br from-blue-50 to-white">
+                        <div className="flex items-center gap-2 mb-4">
+                            <User className="text-blue-500" size={20} />
+                            <span className="text-xs font-bold text-blue-500 tracking-wider">ユーザー入力情報</span>
+                        </div>
+
+                        <div className="space-y-3 text-sm">
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="bg-white p-3 rounded-lg border">
+                                    <div className="text-gray-400 text-xs flex items-center gap-1">
+                                        <User size={12} /> 氏名
+                                    </div>
+                                    <div className="font-bold text-gray-700">{profile?.name || '-'}</div>
+                                </div>
+                                <div className="bg-white p-3 rounded-lg border">
+                                    <div className="text-gray-400 text-xs flex items-center gap-1">
+                                        <Mail size={12} /> メール
+                                    </div>
+                                    <div className="font-bold text-gray-700 text-xs break-all">{profile?.email || '-'}</div>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="bg-white p-3 rounded-lg border">
+                                    <div className="text-gray-400 text-xs flex items-center gap-1">
+                                        <Calendar size={12} /> 生年月日
+                                    </div>
+                                    <div className="font-bold text-gray-700">{profile?.birthDate || '-'}</div>
+                                </div>
+                                <div className="bg-white p-3 rounded-lg border">
+                                    <div className="text-gray-400 text-xs">性別</div>
+                                    <div className="font-bold text-gray-700">
+                                        {profile?.gender === 'female' ? '女性' : profile?.gender === 'male' ? '男性' : 'その他'}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="bg-white p-3 rounded-lg border">
+                                    <div className="text-gray-400 text-xs flex items-center gap-1">
+                                        <Users size={12} /> 家族人数
+                                    </div>
+                                    <div className="font-bold text-gray-700">{profile?.familySize || '-'}人</div>
+                                </div>
+                                <div className="bg-white p-3 rounded-lg border">
+                                    <div className="text-gray-400 text-xs">理想の月収</div>
+                                    <div className="font-bold text-gray-700">{profile?.idealIncome || '-'}万円</div>
+                                </div>
+                            </div>
+
+                            <div className="bg-white p-3 rounded-lg border">
+                                <div className="text-gray-400 text-xs flex items-center gap-1">
+                                    <Briefcase size={12} /> スキル・特技
+                                </div>
+                                <div className="text-gray-700">{profile?.skills || '-'}</div>
+                            </div>
+
+                            <div className="bg-white p-3 rounded-lg border">
+                                <div className="text-gray-400 text-xs">趣味</div>
+                                <div className="text-gray-700">{profile?.hobbies || '-'}</div>
+                            </div>
+
+                            <div className="bg-white p-3 rounded-lg border">
+                                <div className="text-gray-400 text-xs">略歴・経験</div>
+                                <div className="text-gray-700 whitespace-pre-wrap">{profile?.history || '-'}</div>
+                            </div>
+
+                            <div className="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
+                                <div className="text-yellow-600 text-xs font-bold">備考欄（その他希望）</div>
+                                <div className="text-gray-700 whitespace-pre-wrap">{profile?.remarks || '-'}</div>
+                            </div>
+                        </div>
+                    </Card>
+
+                    {/* Admin: Fortune Details */}
                     <Card className="border-2 border-purple-300 bg-gradient-to-br from-purple-50 to-white">
                         <div className="flex items-center gap-2 mb-4">
                             <Shield className="text-purple-500" size={20} />
-                            <span className="text-xs font-bold text-purple-500 tracking-wider">ADMIN MODE</span>
+                            <span className="text-xs font-bold text-purple-500 tracking-wider">鑑定結果詳細</span>
                         </div>
                         <h3 className="font-bold text-gray-700 mb-4">自立への3ステップ</h3>
                         {result.economicForecast.roadmapSteps.map((step) => (
@@ -170,6 +249,7 @@ function ResultContent() {
                             <p className="text-sm text-gray-600 bg-yellow-50 p-3 rounded-lg">{result.dailyAdvice}</p>
                         </div>
                     </Card>
+                    </>
                 ) : (
                     <div className="relative">
                         <Card className="opacity-80 blur-[2px] pointer-events-none select-none">

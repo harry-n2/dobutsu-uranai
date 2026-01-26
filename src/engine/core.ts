@@ -10,18 +10,15 @@ export function calculateFortune(profile: UserProfile): FortuneResult {
     const vitality = calculateVitalityScore(profile.birthDate);
 
     // 2. Economic Calculation (Potential)
-    // Logic: (Ideal - Current) * Factor + Base
-    // Heavily influenced by the "Animal Strategy"
-    // Note: idealIncome is in 万円 (10,000 yen units)
-    const potentialIncome = profile.idealIncome || 50; // Default to 50万円
-    const economicSteps = generateEconomicRoadmap(animalType, profile.skills, potentialIncome);
+    const potentialIncome = profile.idealIncome || 50;
+    const skillsText = profile.skills || '直感';
+    const economicSteps = generateEconomicRoadmap(animalType, skillsText, potentialIncome);
 
     // 3. Divination (卜) & Story
-    // Generate a story based on the transition from "Worry" to "Success"
-    const story = generateStory(profile.name, animalData.name, profile.worries);
+    const story = generateStory(profile.name, animalData.name, profile.history || profile.remarks || '');
 
     // 4. Physiognomy/Feng Shui (相) - Lucky Elements
-    const luckyElements = determineLuckyElements(animalType, profile.region);
+    const luckyElements = determineLuckyElements(animalType);
 
     return {
         animalType,
@@ -29,7 +26,7 @@ export function calculateFortune(profile: UserProfile): FortuneResult {
         catchphrase: animalData.catchphrase,
         coreAssets: {
             talent: animalData.description,
-            hiddenSkill: `${profile.skills[0] || '直感'}を活かした${animalData.name}流のアプローチ`,
+            hiddenSkill: `${skillsText.split(/[,、]/)[0] || '直感'}を活かした${animalData.name}流のアプローチ`,
             winningPattern: animalData.strategy,
         },
         economicForecast: {
@@ -42,7 +39,8 @@ export function calculateFortune(profile: UserProfile): FortuneResult {
     };
 }
 
-function generateEconomicRoadmap(type: AnimalType, skills: string[], target: number) {
+function generateEconomicRoadmap(type: AnimalType, skills: string, target: number) {
+    const firstSkill = skills.split(/[,、\s]/)[0] || 'あなたの経験';
     const steps = [
         {
             step: 1,
@@ -52,27 +50,36 @@ function generateEconomicRoadmap(type: AnimalType, skills: string[], target: num
         {
             step: 2,
             title: 'スキルと強みの掛け合わせ',
-            description: `${skills[0] || 'あなたの経験'}を、${ANIMALS[type].catchphrase}として発信することで価値が生まれます。`,
+            description: `${firstSkill}を、${ANIMALS[type].catchphrase}として発信することで価値が生まれます。`,
         },
         {
             step: 3,
             title: '経済的自立の達成',
-            description: `月収${target.toLocaleString()}円への道筋は、あなた独自の「${ANIMALS[type].name}スタイル」で確立されます。`,
+            description: `月収${target.toLocaleString()}万円への道筋は、あなた独自の「${ANIMALS[type].name}スタイル」で確立されます。`,
         },
     ];
     return steps;
 }
 
-function generateStory(userName: string, animalName: string, worry: string): string {
-    return `"${worry}"... そんな悩みの中にこそ、${userName}さんの本当の強さが眠っています。あなたは本来、${animalName}のように輝く存在です。今こそ、その封印を解く時が来ました。`;
+function generateStory(userName: string, animalName: string, background: string): string {
+    if (background) {
+        return `"${background.slice(0, 50)}${background.length > 50 ? '...' : ''}"... そんな背景の中にこそ、${userName}さんの本当の強さが眠っています。あなたは本来、${animalName}のように輝く存在です。今こそ、その封印を解く時が来ました。`;
+    }
+    return `${userName}さん、あなたは本来、${animalName}のように輝く存在です。今こそ、その封印を解く時が来ました。自分を信じて、一歩を踏み出しましょう。`;
 }
 
-function determineLuckyElements(type: AnimalType, region: string) {
+function determineLuckyElements(type: AnimalType) {
     const data = ANIMALS[type];
+    const directions = ['東', '西', '南', '北', '南東', '南西', '北東', '北西'];
+    const items = ['手帳', '観葉植物', 'アロマキャンドル', 'パワーストーン', '写真立て', 'お財布'];
+
+    // Deterministic selection based on animal type
+    const index = Object.values(AnimalType).indexOf(type);
+
     return {
-        color: 'ゴールド', // Default global theme accent
+        color: 'ゴールド',
         colorCode: data.colors.primary,
-        direction: '南東', // Feng shui default for wealth
-        item: '手帳', // Placeholder
+        direction: directions[index % directions.length],
+        item: items[index % items.length],
     };
 }
