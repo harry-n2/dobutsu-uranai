@@ -1,0 +1,5 @@
+1:"$Sreact.fragment"
+2:I[7121,[],""]
+3:I[4581,[],""]
+:HL["/dobutsu-uranai/_next/static/css/cbd07c5bc7a91f0d.css","style"]
+0:{"buildId":"hj1Vu9KnnmyarkkYj-0Vq","rsc":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/dobutsu-uranai/_next/static/css/cbd07c5bc7a91f0d.css","precedence":"next"}]],["$","html",null,{"lang":"ja","children":["$","body",null,{"className":"antialiased min-h-screen","children":["$","$L2",null,{"parallelRouterKey":"children","template":["$","$L3",null,{}]}]}]}]]}],"loading":null,"isPartial":false}

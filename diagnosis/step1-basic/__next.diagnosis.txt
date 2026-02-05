@@ -1,0 +1,4 @@
+1:"$Sreact.fragment"
+2:I[7121,[],""]
+3:I[4581,[],""]
+0:{"buildId":"hj1Vu9KnnmyarkkYj-0Vq","rsc":["$","$1","c",{"children":[null,["$","div",null,{"className":"min-h-screen bg-gradient-to-br from-pink-50 via-white to-blue-50 flex flex-col items-center py-8 px-4","children":[["$","div",null,{"className":"w-full max-w-lg mb-6","children":["$","h2",null,{"className":"text-center text-gray-400 text-sm font-medium tracking-widest","children":"DNA FORTUNE TELLING"}]}],["$","div",null,{"className":"w-full max-w-lg","children":["$","$L2",null,{"parallelRouterKey":"children","template":["$","$L3",null,{}]}]}]]}]]}],"loading":null,"isPartial":false}
