@@ -14,7 +14,9 @@ export default function Step1Basic() {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
-        birthDate: '',
+        birthYear: '',
+        birthMonth: '',
+        birthDay: '',
         gender: 'female',
     });
 
@@ -23,15 +25,22 @@ export default function Step1Basic() {
     };
 
     const onNext = () => {
-        if (!formData.name || !formData.email || !formData.birthDate) {
+        if (!formData.name || !formData.email || !formData.birthYear || !formData.birthMonth || !formData.birthDay) {
             return alert('必須項目を入力してください');
         }
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
             return alert('有効なメールアドレスを入力してください');
         }
+        const y = parseInt(formData.birthYear, 10);
+        const m = parseInt(formData.birthMonth, 10);
+        const d = parseInt(formData.birthDay, 10);
+        if (isNaN(y) || y < 1900 || y > 2026 || isNaN(m) || m < 1 || m > 12 || isNaN(d) || d < 1 || d > 31) {
+            return alert('正しい生年月日を入力してください');
+        }
+        const birthDate = `${formData.birthYear.padStart(4, '0')}-${formData.birthMonth.padStart(2, '0')}-${formData.birthDay.padStart(2, '0')}`;
 
         const current = JSON.parse(localStorage.getItem('fortune_profile') || '{}');
-        localStorage.setItem('fortune_profile', JSON.stringify({ ...current, ...formData }));
+        localStorage.setItem('fortune_profile', JSON.stringify({ ...current, name: formData.name, email: formData.email, birthDate, gender: formData.gender }));
 
         router.push('/diagnosis/step2-lifestyle');
     };
@@ -69,14 +78,44 @@ export default function Step1Basic() {
                         required
                     />
 
-                    <Input
-                        label="生年月日"
-                        type="date"
-                        name="birthDate"
-                        value={formData.birthDate}
-                        onChange={handleChange}
-                        required
-                    />
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1 ml-1">生年月日</label>
+                        <div className="flex gap-2 items-center">
+                            <input
+                                type="text"
+                                inputMode="numeric"
+                                name="birthYear"
+                                placeholder="1985"
+                                maxLength={4}
+                                value={formData.birthYear}
+                                onChange={handleChange}
+                                className="flex h-12 w-full rounded-xl border border-gray-200 bg-white/80 px-3 py-2 text-base text-center placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-300 transition-all"
+                            />
+                            <span className="text-gray-500 text-sm shrink-0">年</span>
+                            <input
+                                type="text"
+                                inputMode="numeric"
+                                name="birthMonth"
+                                placeholder="03"
+                                maxLength={2}
+                                value={formData.birthMonth}
+                                onChange={handleChange}
+                                className="flex h-12 w-20 rounded-xl border border-gray-200 bg-white/80 px-3 py-2 text-base text-center placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-300 transition-all"
+                            />
+                            <span className="text-gray-500 text-sm shrink-0">月</span>
+                            <input
+                                type="text"
+                                inputMode="numeric"
+                                name="birthDay"
+                                placeholder="15"
+                                maxLength={2}
+                                value={formData.birthDay}
+                                onChange={handleChange}
+                                className="flex h-12 w-20 rounded-xl border border-gray-200 bg-white/80 px-3 py-2 text-base text-center placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-300 transition-all"
+                            />
+                            <span className="text-gray-500 text-sm shrink-0">日</span>
+                        </div>
+                    </div>
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1 ml-1">性別</label>
@@ -117,7 +156,7 @@ export default function Step1Basic() {
                     className="text-gray-500"
                     onClick={() => {
                         localStorage.removeItem('fortune_profile');
-                        setFormData({ name: '', email: '', birthDate: '', gender: 'female' });
+                        setFormData({ name: '', email: '', birthYear: '', birthMonth: '', birthDay: '', gender: 'female' });
                     }}
                 >
                     <RotateCcw size={16} className="mr-1" />
